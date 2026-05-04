@@ -37,6 +37,8 @@ export const CreateCheckoutBody = zod.object({
   name: zod.string(),
   email: zod.string(),
   phone: zod.string().optional(),
+  profession: zod.string().optional(),
+  gdprConsent: zod.literal(true),
 });
 
 export const CreateCheckoutResponse = zod.object({

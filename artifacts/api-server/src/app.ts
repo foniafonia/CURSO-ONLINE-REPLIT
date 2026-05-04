@@ -26,6 +26,7 @@ app.use(
   }),
 );
 app.use(cors());
+app.post("/api/checkout/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

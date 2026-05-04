@@ -20,6 +20,9 @@ const checkoutSchema = z.object({
   email: z.string().email("Correo electrónico inválido"),
   phone: z.string().optional(),
   profession: z.string().optional(),
+  gdprConsent: z.literal(true, {
+    errorMap: () => ({ message: "Debes aceptar la política de privacidad" }),
+  }),
 });
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
@@ -29,11 +32,16 @@ function euros(n: number | string) {
 }
 
 /* ─── GDPR Consent ────────────────────────────────────────────────────── */
-function GdprConsent() {
+function GdprConsent({ checked, onChange }: { checked: boolean; onChange: (value: boolean) => void }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <label className="form-consent" style={{ alignItems: "flex-start", gap: 10 }}>
-      <input type="checkbox" required style={{ marginTop: 3, flexShrink: 0 }} />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        style={{ marginTop: 3, flexShrink: 0 }}
+      />
       <span>
         He leído y acepto el tratamiento de mis datos para gestionar mi inscripción y recibir comunicaciones del curso.{" "}
         <button
@@ -66,7 +74,7 @@ export default function Home() {
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
-    defaultValues: { name: "", email: "", phone: "", profession: "" },
+    defaultValues: { name: "", email: "", phone: "", profession: "", gdprConsent: false },
   });
 
   /* Inject Google Fonts */
@@ -81,7 +89,15 @@ export default function Home() {
 
   function onSubmit(data: CheckoutFormValues) {
     createCheckout.mutate(
-      { data },
+      {
+        data: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          profession: data.profession,
+          gdprConsent: data.gdprConsent,
+        },
+      },
       {
         onSuccess: (result) => {
           if (result.url) window.location.href = result.url;
@@ -93,7 +109,7 @@ export default function Home() {
   const TOTAL_CAPACITY = 20;
   const REFERENCE_PRICE = 99;
   const seatsLeft = courseInfo?.presaleSpotsLeft ?? 10;
-  const currentPrice = courseInfo?.currentPrice ?? 39;
+  const currentPrice = courseInfo?.currentPrice ?? 49;
   const regularPrice = courseInfo?.regularPrice ?? 79;
   const totalEnrolled = courseInfo?.totalEnrolled ?? 0;
   const isSoldOut = totalEnrolled >= TOTAL_CAPACITY;
@@ -922,7 +938,14 @@ export default function Home() {
                     </FormItem>
                   )} />
 
-                  <GdprConsent />
+                  <FormField control={form.control} name="gdprConsent" render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <GdprConsent checked={Boolean(field.value)} onChange={field.onChange} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <button type="submit" className="cta-btn" disabled={createCheckout.isPending} data-testid="button-submit-checkout" style={{ marginTop: 8 }}>
                     {createCheckout.isPending && <Loader2 style={{ width: 18, height: 18, display: "inline", marginRight: 8, animation: "spin 1s linear infinite" }} />}

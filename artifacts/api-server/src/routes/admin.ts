@@ -11,13 +11,21 @@ import {
 
 const PRESALE_SPOTS = 10;
 const COURSE_NAME = "Logopedia con IA: Tu primer curso online";
-const ADMIN_SECRET = process.env.ADMIN_SECRET ?? "logoped-ia-admin-2026";
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
+
+function isAuthorized(headers: Record<string, unknown>) {
+  return Boolean(
+    ADMIN_SECRET &&
+    typeof headers["x-admin-secret"] === "string" &&
+    headers["x-admin-secret"] === ADMIN_SECRET,
+  );
+}
 
 const router = Router();
 
 router.get("/admin/enrollments", async (req, res) => {
   const parsed = AdminGetEnrollmentsHeader.safeParse(req.headers);
-  if (!parsed.success || parsed.data["x-admin-secret"] !== ADMIN_SECRET) {
+  if (!parsed.success || !isAuthorized(parsed.data)) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }
@@ -50,7 +58,7 @@ router.get("/admin/enrollments", async (req, res) => {
 
 router.get("/admin/stats", async (req, res) => {
   const parsed = AdminGetStatsHeader.safeParse(req.headers);
-  if (!parsed.success || parsed.data["x-admin-secret"] !== ADMIN_SECRET) {
+  if (!parsed.success || !isAuthorized(parsed.data)) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }
@@ -116,7 +124,7 @@ router.post("/admin/enrollments/:id/resend-email", async (req, res) => {
 
   if (
     !headerParsed.success ||
-    headerParsed.data["x-admin-secret"] !== ADMIN_SECRET
+    !isAuthorized(headerParsed.data)
   ) {
     res.status(401).json({ error: "No autorizado" });
     return;
@@ -173,7 +181,7 @@ router.post("/admin/enrollments/:id/resend-email", async (req, res) => {
 
 router.post("/admin/broadcast", async (req, res) => {
   const headerParsed = AdminResendEmailHeader.safeParse(req.headers);
-  if (!headerParsed.success || headerParsed.data["x-admin-secret"] !== ADMIN_SECRET) {
+  if (!headerParsed.success || !isAuthorized(headerParsed.data)) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }
@@ -227,7 +235,7 @@ router.post("/admin/broadcast", async (req, res) => {
 
 router.post("/admin/test-email", async (req, res) => {
   const headerParsed = AdminResendEmailHeader.safeParse(req.headers);
-  if (!headerParsed.success || headerParsed.data["x-admin-secret"] !== ADMIN_SECRET) {
+  if (!headerParsed.success || !isAuthorized(headerParsed.data)) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }
@@ -259,7 +267,7 @@ router.post("/admin/test-email", async (req, res) => {
 
 router.get("/admin/check-gmail-message/:msgId", async (req, res) => {
   const headerParsed = AdminResendEmailHeader.safeParse(req.headers);
-  if (!headerParsed.success || headerParsed.data["x-admin-secret"] !== ADMIN_SECRET) {
+  if (!headerParsed.success || !isAuthorized(headerParsed.data)) {
     res.status(401).json({ error: "No autorizado" });
     return;
   }

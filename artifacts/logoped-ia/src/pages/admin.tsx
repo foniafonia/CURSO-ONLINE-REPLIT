@@ -18,7 +18,6 @@ import {
   ArrowLeft, Send, MessageSquare, Video, FileText, Eye, ChevronDown, ChevronUp, Phone
 } from "lucide-react";
 
-const ADMIN_PASSWORD = "logoped-ia-admin-2026";
 const BASE_PATH = import.meta.env.BASE_URL ?? "/";
 
 const TEMPLATES: { id: string; label: string; icon: React.ReactNode; subject: string; body: string }[] = [
@@ -82,15 +81,17 @@ const TEMPLATES: { id: string; label: string; icon: React.ReactNode; subject: st
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [adminSecret, setAdminSecret] = useState("");
   const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    if (password.trim().length > 0) {
       setIsAuthenticated(true);
+      setAdminSecret(password.trim());
       setError("");
     } else {
-      setError("Contraseña incorrecta");
+      setError("Escribe la contraseña");
     }
   };
 
@@ -127,12 +128,12 @@ export default function AdminDashboard() {
     );
   }
 
-  return <AdminDashboardContent />;
+  return <AdminDashboardContent adminSecret={adminSecret} />;
 }
 
-function AdminDashboardContent() {
+function AdminDashboardContent({ adminSecret }: { adminSecret: string }) {
   const { toast } = useToast();
-  const authHeaders = { 'x-admin-secret': ADMIN_PASSWORD };
+  const authHeaders = { "x-admin-secret": adminSecret };
 
   const { data: stats, isLoading: statsLoading } = useAdminGetStats({
     request: { headers: authHeaders },
@@ -197,7 +198,20 @@ function AdminDashboardContent() {
     );
   }
 
-  const enrolledWithPhone = (enrollments ?? []).filter(e => e.status === "completed" && e.phone);
+  if (!stats || !enrollments) {
+    return (
+      <div className="min-h-screen bg-secondary/20 flex flex-col items-center justify-center p-6">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Acceso no autorizado</CardTitle>
+            <CardDescription>La contraseña no es válida o falta configurar ADMIN_SECRET en el servidor.</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  const enrolledWithPhone = enrollments.filter(e => e.status === "completed" && e.phone);
 
   return (
     <div className="min-h-screen bg-secondary/20 p-6 md:p-10">

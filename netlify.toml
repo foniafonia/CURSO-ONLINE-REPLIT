@@ -1,0 +1,19 @@
+[build]
+  command = "pnpm install --frozen-lockfile || pnpm install && pnpm --filter @workspace/logoped-ia run build"
+  publish = "artifacts/logoped-ia/dist/public"
+
+[functions]
+  directory = "artifacts/api-server/netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "serverless-http"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

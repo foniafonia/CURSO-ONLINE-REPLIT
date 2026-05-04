@@ -26,6 +26,8 @@ export interface CheckoutRequest {
   name: string;
   email: string;
   phone?: string;
+  profession?: string;
+  gdprConsent: true;
 }
 
 export interface CheckoutSession {
