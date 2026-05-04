@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install --frozen-lockfile || pnpm install && pnpm --filter @workspace/logoped-ia run build"
+  command = "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile && pnpm --filter @workspace/logoped-ia run build"
   publish = "artifacts/logoped-ia/dist/public"
 
 [functions]
