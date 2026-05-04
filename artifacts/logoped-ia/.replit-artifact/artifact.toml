@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Logoped-IA Curso Online"
+version = "1.0.0"
+id = "artifacts/logoped-ia"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24418
+
+[services.development]
+run = "pnpm --filter @workspace/logoped-ia run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/logoped-ia", "run", "build" ]
+publicDir = "artifacts/logoped-ia/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24418"
+BASE_PATH = "/"

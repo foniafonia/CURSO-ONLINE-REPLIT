@@ -1,0 +1,352 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Logoped-IA Course API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: course
+    description: Course information
+  - name: checkout
+    description: Payment and checkout
+  - name: admin
+    description: Admin operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /course/info:
+    get:
+      operationId: getCourseInfo
+      tags: [course]
+      summary: Get current course pricing and availability
+      responses:
+        "200":
+          description: Course info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseInfo"
+
+  /checkout/create:
+    post:
+      operationId: createCheckout
+      tags: [checkout]
+      summary: Create a Stripe checkout session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutRequest"
+      responses:
+        "200":
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutSession"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkout/verify:
+    get:
+      operationId: verifyCheckout
+      tags: [checkout]
+      summary: Verify a Stripe checkout session
+      parameters:
+        - name: session_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Checkout verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutVerification"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/enrollments:
+    get:
+      operationId: adminGetEnrollments
+      tags: [admin]
+      summary: List all enrollments
+      parameters:
+        - name: x-admin-secret
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of enrollments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Enrollment"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Get admin statistics
+      parameters:
+        - name: x-admin-secret
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/enrollments/{id}/resend-email:
+    post:
+      operationId: adminResendEmail
+      tags: [admin]
+      summary: Resend confirmation email to a student
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: x-admin-secret
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Email sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Enrollment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    CourseInfo:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        presalePrice:
+          type: number
+        regularPrice:
+          type: number
+        presaleSpots:
+          type: integer
+        presaleSpotsUsed:
+          type: integer
+        presaleSpotsLeft:
+          type: integer
+        isPresale:
+          type: boolean
+        currentPrice:
+          type: number
+        totalEnrolled:
+          type: integer
+      required:
+        - title
+        - description
+        - presalePrice
+        - regularPrice
+        - presaleSpots
+        - presaleSpotsUsed
+        - presaleSpotsLeft
+        - isPresale
+        - currentPrice
+        - totalEnrolled
+
+    CheckoutRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+      required:
+        - name
+        - email
+
+    CheckoutSession:
+      type: object
+      properties:
+        sessionId:
+          type: string
+        url:
+          type: string
+        price:
+          type: number
+        isPresale:
+          type: boolean
+      required:
+        - sessionId
+        - url
+        - price
+        - isPresale
+
+    CheckoutVerification:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [completed, pending, failed]
+        enrollment:
+          $ref: "#/components/schemas/Enrollment"
+      required:
+        - status
+
+    Enrollment:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        pricePaid:
+          type: number
+        isPresale:
+          type: boolean
+        status:
+          type: string
+          enum: [pending, completed, failed]
+        stripeSessionId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - pricePaid
+        - isPresale
+        - status
+        - createdAt
+        - updatedAt
+
+    AdminStats:
+      type: object
+      properties:
+        totalEnrolled:
+          type: integer
+        presaleCount:
+          type: integer
+        regularCount:
+          type: integer
+        totalRevenue:
+          type: number
+        presaleRevenue:
+          type: number
+        regularRevenue:
+          type: number
+        presaleSpotsLeft:
+          type: integer
+        pendingCount:
+          type: integer
+      required:
+        - totalEnrolled
+        - presaleCount
+        - regularCount
+        - totalRevenue
+        - presaleRevenue
+        - regularRevenue
+        - presaleSpotsLeft
+        - pendingCount
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
