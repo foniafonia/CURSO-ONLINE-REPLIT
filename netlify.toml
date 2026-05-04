@@ -1,5 +1,5 @@
 [build]
-  command = "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile && pnpm --filter @workspace/logoped-ia run build"
+  command = "pnpm --filter @workspace/logoped-ia run build"
   publish = "artifacts/logoped-ia/dist/public"
 
 [functions]
@@ -17,3 +17,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  NODE_VERSION = "20"
