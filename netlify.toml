@@ -1,5 +1,5 @@
 [build]
-  command = "npm install -g pnpm@10.11.0 && pnpm install && pnpm --filter @workspace/logoped-ia run build && pnpm --filter @workspace/api-server run build"
+  command = "npx -y pnpm@10.11.0 install && npx -y pnpm@10.11.0 --filter @workspace/logoped-ia run build && npx -y pnpm@10.11.0 --filter @workspace/api-server run build"
   publish = "artifacts/logoped-ia/dist/public"
 
 [build.environment]
