@@ -20,3 +20,4 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  SECRETS_SCAN_OMIT_PATHS = "DEPLOY_*.md,replit.md,.env.example,artifacts/**/.replit-artifact/**"
