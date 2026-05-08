@@ -1,5 +1,5 @@
 [build]
-  command = "corepack enable pnpm && pnpm install && pnpm --filter @workspace/logoped-ia run build && pnpm --filter @workspace/api-server run build"
+  command = "corepack enable pnpm && pnpm install && pnpm --filter @workspace/api-server run build && pnpm --filter @workspace/logoped-ia run build"
   publish = "artifacts/logoped-ia/dist/public"
 
 [build.environment]
