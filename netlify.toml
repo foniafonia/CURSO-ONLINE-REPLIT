@@ -1,10 +1,11 @@
 [build]
-  command = "npx -y pnpm@10.11.0 install && npx -y pnpm@10.11.0 --filter @workspace/logoped-ia run build && npx -y pnpm@10.11.0 --filter @workspace/api-server run build"
+  command = "corepack enable pnpm && pnpm install && pnpm --filter @workspace/logoped-ia run build && pnpm --filter @workspace/api-server run build"
   publish = "artifacts/logoped-ia/dist/public"
 
 [build.environment]
   NODE_VERSION = "20"
   SECRETS_SCAN_ENABLED = "false"
+  PNPM_VERSION = "10.11.0"
 
 [functions]
   directory = "artifacts/api-server/netlify/functions"
