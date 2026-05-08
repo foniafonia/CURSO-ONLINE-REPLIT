@@ -14,6 +14,29 @@ async function buildAll() {
   const distDir = path.resolve(artifactDir, "dist");
   await rm(distDir, { recursive: true, force: true });
 
+  // Build Netlify function with bundled dependencies
+  await esbuild({
+    entryPoints: [path.resolve(artifactDir, "netlify/functions/api.ts")],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outdir: path.resolve(artifactDir, "netlify/functions"),
+    outExtension: { ".ts": ".mjs" },
+    logLevel: "info",
+    external: [], // Bundle all dependencies for Netlify Functions
+    sourcemap: "linked",
+    banner: {
+      js: `import { createRequire as __bannerCrReq } from 'node:module';
+import __bannerPath from 'node:path';
+import __bannerUrl from 'node:url';
+
+globalThis.require = __bannerCrReq(import.meta.url);
+globalThis.__filename = __bannerUrl.fileURLToPath(import.meta.url);
+globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
+    `,
+    },
+  });
+
   await esbuild({
     entryPoints: [path.resolve(artifactDir, "src/index.ts")],
     platform: "node",
