@@ -1,6 +1,7 @@
 [build]
   command = "pnpm --filter @workspace/logoped-ia run build"
   publish = "artifacts/logoped-ia/dist/public"
+  environment = { SECRETS_SCAN_OMIT_PATHS = "DEPLOY_*.md,replit.md,.env.example,artifacts/**/.replit-artifact/**" }
 
 [functions]
   directory = "artifacts/api-server/netlify/functions"
@@ -20,4 +21,3 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  SECRETS_SCAN_OMIT_PATHS = "DEPLOY_*.md,replit.md,.env.example,artifacts/**/.replit-artifact/**"
