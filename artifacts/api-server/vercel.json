@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && ./build-for-vercel-api.sh",
-  "outputDirectory": "../../artifacts/api-server/dist",
+  "buildCommand": "pnpm --filter @workspace/api-server run build",
+  "outputDirectory": "dist",
   "framework": "express"
 }

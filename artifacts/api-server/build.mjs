@@ -21,7 +21,7 @@ async function buildAll() {
     bundle: true,
     format: "esm",
     outdir: path.resolve(artifactDir, "netlify/functions"),
-    outExtension: { ".ts": ".mjs" },
+    outExtension: { ".js": ".mjs" },
     logLevel: "info",
     external: [], // Bundle all dependencies for Netlify Functions
     sourcemap: "linked",
