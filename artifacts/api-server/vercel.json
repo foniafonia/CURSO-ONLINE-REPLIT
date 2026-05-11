@@ -1,6 +1,5 @@
 {
-  "buildCommand": "pnpm install && pnpm run build",
-  "outputDirectory": "dist",
-  "framework": "nodejs",
-  "nodejs": "20"
+  "buildCommand": "cd ../.. && ./build-for-vercel-api.sh",
+  "outputDirectory": "../../artifacts/api-server/dist",
+  "framework": "express"
 }

@@ -1,0 +1,6 @@
+{
+  "name": "logoped-web", 
+  "buildCommand": "cd ../.. && corepack enable pnpm && pnpm install && pnpm --filter @workspace/logoped-ia run build",
+  "outputDirectory": "dist/public",
+  "framework": "vite"
+}
