@@ -1,8 +1,6 @@
 {
-  "version": 2,
-  "functions": {
-    "api/[...path].ts": {
-      "maxDuration": 30
-    }
-  }
+  "buildCommand": "pnpm install && pnpm run build",
+  "outputDirectory": "dist",
+  "framework": "nodejs",
+  "nodejs": "20"
 }
