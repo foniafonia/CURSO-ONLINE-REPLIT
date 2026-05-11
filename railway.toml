@@ -1,0 +1,7 @@
+[build]
+  builder = "nix"
+  buildCommand = "pnpm install && pnpm run build"
+
+[deploy]
+  startCommand = "pnpm run start"
+  restartPolicyMaxRetries = 5
