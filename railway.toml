@@ -1,9 +1,9 @@
 [build]
   builder = "nixpacks"
-  buildCommand = "pnpm install && pnpm run build"
+  buildCommand = "corepack enable pnpm && pnpm install && pnpm run build"
 
 [deploy]
-  startCommand = "PORT=3000 pnpm run start"
+  startCommand = "PORT=3000 node index.js"
   restartPolicyMaxRetries = 5
 
 [env]
