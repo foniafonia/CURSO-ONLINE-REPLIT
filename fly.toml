@@ -1,4 +1,4 @@
-app = "curso-ia-logoped"
+app = "curso-ia"
 primary_region = "mad"
 
 [build]
