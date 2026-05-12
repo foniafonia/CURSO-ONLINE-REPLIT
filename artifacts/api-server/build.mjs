@@ -14,6 +14,28 @@ async function buildAll() {
   const distDir = path.resolve(artifactDir, "dist");
   await rm(distDir, { recursive: true, force: true });
 
+  // Build Vercel function (exports Express app directly)
+  await esbuild({
+    entryPoints: [path.resolve(artifactDir, "src/vercel-handler.ts")],
+    platform: "node",
+    bundle: true,
+    format: "esm",
+    outfile: path.resolve(artifactDir, "../../api/handler.mjs"),
+    logLevel: "info",
+    external: [],
+    sourcemap: false,
+    banner: {
+      js: `import { createRequire as __bannerCrReq } from 'node:module';
+import __bannerPath from 'node:path';
+import __bannerUrl from 'node:url';
+
+globalThis.require = __bannerCrReq(import.meta.url);
+globalThis.__filename = __bannerUrl.fileURLToPath(import.meta.url);
+globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
+    `,
+    },
+  });
+
   // Build Netlify function with bundled dependencies
   await esbuild({
     entryPoints: [path.resolve(artifactDir, "netlify/functions/api.ts")],

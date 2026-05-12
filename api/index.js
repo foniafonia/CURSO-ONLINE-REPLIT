@@ -1,1 +1,1 @@
-export { handler as default } from "../artifacts/api-server/netlify/functions/api.mjs";
+export { default } from "./handler.mjs";
