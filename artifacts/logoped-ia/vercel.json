@@ -1,5 +1,9 @@
 {
-  "buildCommand": "cd ../.. && ./build-for-vercel-web.sh",
-  "outputDirectory": "../../artifacts/logoped-ia/dist/public",
-  "framework": "vite"
+  "buildCommand": "cd ../.. && pnpm -r --filter './lib/**' run build 2>/dev/null; pnpm --filter @workspace/logoped-ia run build",
+  "installCommand": "cd ../.. && pnpm install",
+  "outputDirectory": "dist/public",
+  "framework": "vite",
+  "env": {
+    "VITE_API_BASE_URL": "https://logoped-api-v2.vercel.app"
+  }
 }
