@@ -1,4 +1,6 @@
 {
+  "buildCommand": "pnpm -r --filter './lib/**' run build 2>/dev/null; pnpm --filter @workspace/api-server run build",
+  "installCommand": "pnpm install",
   "functions": {
     "api/index.js": {
       "memory": 512,
