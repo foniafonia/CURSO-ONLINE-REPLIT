@@ -1,0 +1,9 @@
+{
+  "name": "logoped-vercel",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm install && pnpm run build",
+    "start": "node artifacts/api-server/dist/index.mjs"
+  },
+  "dependencies": {}
+}

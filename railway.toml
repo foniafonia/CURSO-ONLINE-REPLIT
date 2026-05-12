@@ -1,9 +1,9 @@
 [build]
   builder = "nixpacks"
-  buildCommand = "corepack enable pnpm && pnpm install && pnpm run build"
+  buildCommand = "npm install -g pnpm@10.11.0 && pnpm install && pnpm --filter @workspace/api-server run build"
 
 [deploy]
-  startCommand = "PORT=3000 node index.js"
+  startCommand = "node artifacts/api-server/dist/index.mjs"
   restartPolicyMaxRetries = 5
 
 [env]

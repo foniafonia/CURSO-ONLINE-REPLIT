@@ -1,5 +1,6 @@
 {
-  "buildCommand": "cd .. && npx -y pnpm@10.11.0 install && npx -y pnpm@10.11.0 --filter @workspace/api-server run build",
-  "outputDirectory": "../artifacts/api-server/dist",
-  "framework": "express"
+  "framework": "express",
+  "buildCommand": "echo Building...",
+  "outputDirectory": ".vercel/output",
+  "installCommand": "echo No install needed"
 }

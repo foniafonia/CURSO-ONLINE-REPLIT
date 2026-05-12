@@ -1,0 +1,9 @@
+{
+  "name": "logoped-api-vercel",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Pre-built - check ../artifacts/api-server/dist'",
+    "start": "node ../artifacts/api-server/dist/index.mjs"
+  },
+  "dependencies": {}
+}
