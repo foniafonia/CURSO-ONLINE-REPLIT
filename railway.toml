@@ -1,7 +1,10 @@
 [build]
-  builder = "nix"
+  builder = "nixpacks"
   buildCommand = "pnpm install && pnpm run build"
 
 [deploy]
-  startCommand = "pnpm run start"
+  startCommand = "PORT=3000 pnpm run start"
   restartPolicyMaxRetries = 5
+
+[env]
+  PORT = "3000"
