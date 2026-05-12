@@ -2,17 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY artifacts ./artifacts
+COPY lib ./lib
 
-# Copy repo
-COPY . .
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @workspace/api-server run build
 
-# Build
-RUN pnpm run build
+ENV PORT=3000
+EXPOSE 3000
 
-# Start API by default
-CMD ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
+CMD ["node", "artifacts/api-server/dist/index.mjs"]
